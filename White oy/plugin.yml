@@ -1,0 +1,17 @@
+name: Whitejoy
+main: cn.winfxk.nukkit.whitejoy.Whitejoy
+api:
+  - 1.0.0
+version: 1.0
+load: POSTWORLD
+website: http://winfxk.cn
+author: Winfxk
+depend:
+  - WinfxkLib
+permissions:
+  Whitejoy.Command.Main:
+    description: 钓王主命令命令
+    default: true
+  Whitejoy.Command.Admin:
+    description: 钓王管理命令
+    default: op

@@ -1,0 +1,42 @@
+lang: chs
+插件启动: '{RGBTextStart}{PluginName}启动(耗时: {loadTime})...{RGBTextEnd}        §6欢迎{RGBTextStart}使用{PluginName}{RGBTextEnd}§f(*￣︶￣)'
+插件关闭: '{RGBTextStart}{PluginName}关闭！本次运行时长： {loadTime}{RGBTextEnd}'
+权限不足: §4你没有权限执行这个操作。
+无法加载物品: §4无法加载物品§3{ItemID}§4！请检查数据。
+Game:
+  Countdown: §e[§9{PluginName}§e]§4钓王竞赛时间仅剩§d{Duration}§f(§b{GameTime}§4秒§f)§4！
+  ErrorStop: §e[§9{PluginName}§e]§4钓王竞赛出现异常！为防止出现问题将停止本次竞赛...
+  StartGame: §e[§9{PluginName}§e]§4钓王竞赛已经开始！限时§d{Duration}§f(§b{GameTime}§4秒§f)§4！赶快掏出您的钓鱼竿加入进来吧~
+  ForcedStop: §e[§9{PluginName}§e]§4钓王竞赛已被强制停止！
+  NewFish: §e[§9{PluginName}§e]§4第§5{FishCount}§4条鱼由§8{Player}§4发现！尺寸：{Length}，重量：{Size}，当前排名:{Rank}
+  TopItem: §e[§9{Player}§e]§f>§b>§d>§e{Rank}
+  MyEntityName: '{RGBTextStart}一条欢乐的小鱼{RGBTextEnd}'
+  FishKick: §4可爱的小鱼不想看到你！
+  Disaster: §4你钓上来一个{Name}，这简直是一个灾难！
+  Sundries: §4你钓上来一个{Name}，这不知道是该哭还是该笑！
+Command:
+  PlayerCommand:
+    description: '{PluginName}主命令'
+    usageMessage: '/WhiteJoy help'
+    开始游戏: 开始游戏
+    游戏已经开始: §4钓王竞赛已经开始！请勿重复开局！
+GameItemName:
+  - "{RandColor}美人鱼"
+  - "{RandColor}草鱼"
+  - "{RandColor}乌龟鱼"
+  - "{RandColor}草包鱼"
+  - "{RandColor}鲸鱼"
+  - "{RandColor}金鱼"
+  - "{RandColor}鲑鱼"
+  - "{RandColor}鲤鱼"
+GameItemLore:
+  - '{RandColor}尺寸{RandColor}：{RandColor}{Length}{RandColor}，重量{RandColor}：{RandColor}{Size}'
+Shop:
+  NotFile: §4无法打开对应的商店！请联系服务器管理员;
+  Main:
+    Title: 钓王商店
+    Content: " "
+    ShopItem: '§f{FishName}    §b大小：§f{Size}    §5重量：§f{Length}'
+    SellFish: '{RandColor}出售战利品'
+    Setting: '{RandColor}系统设置'
+    DelFish: '{RandColor}删除物品'
