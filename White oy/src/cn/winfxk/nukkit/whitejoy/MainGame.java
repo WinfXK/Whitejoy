@@ -12,6 +12,8 @@ import java.util.*;
 
 public class MainGame extends Thread {
     public static final String[] BaseKey = {"{Duration}", "{GameTime}", "{Top}", "{Player}", "{Money}", "{FishCount}", "{Rank}"};
+    public static final String[] BaseKeyByLow = {"{Duration}", "{GameTime}", "{Player}", "{Money}", "{FishCount}"};
+    public static final String[] FishPlayerStopKey = {"{MaxPlayer}", "{MaxSize}"};
     protected static final Map<String, BaseItem> BaseItems = new HashMap<>();
     private static final Map<String, Integer> Items = new HashMap<>();
     private static final Message msg = Whitejoy.getMain().getMessage();
@@ -39,7 +41,8 @@ public class MainGame extends Thread {
         Items.clear();
         ItemCount = 0;
         Config config = new Config(new File(Whitejoy.getMain().getConfigDir(), Whitejoy.SBItemFileName));
-        Map<String, Object> map = config.getMap("灾难");
+        Object obj = config.get("灾难");
+        Map<String, Object> map = obj instanceof Map ? (Map<String, Object>) obj : new HashMap<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getValue() == null || !Tool.isInteger(entry.getValue())) continue;
             Items.put(entry.getKey(), Tool.ObjToInt(entry.getValue()));
@@ -78,47 +81,55 @@ public class MainGame extends Thread {
         FishCount = 0;
         StartGame = true;
         boolean ErrorExit = true;
-        server.broadcastMessage(msg.getSon(MainKey, "StartGame", BaseKey, getData((Player) null)));
+        server.broadcastMessage(msg.getSon(MainKey, "StartGame", BaseKey, getData(null)));
         while (StartGame) {
-            if (Time-- <= 0) {
+            if (--Time <= 0) {
                 ErrorExit = false;
                 break;
             }
             try {
                 sleep(1000);
             } catch (InterruptedException e) {
-                server.broadcastMessage(msg.getSon(MainKey, "ErrorStop", BaseKey, getData((Player) null)));
+                server.broadcastMessage(msg.getSon(MainKey, "ErrorStop", BaseKey, getData(null)));
                 return;
             }
             if (Time == 10 || Time == 30 || (Time <= 5 && Time >= 0) || Time % 60 == 0)
-                server.broadcastMessage(msg.getSon(MainKey, "Countdown", BaseKey, getData((Player) null)));
+                server.broadcastMessage(msg.getSon(MainKey, "Countdown", BaseKey, getData(null)));
         }
         StartGame = false;
         if (ErrorExit) {
-            server.broadcastMessage(msg.getSon(MainKey, "ForcedStop", BaseKey, getData((Player) null)));
+            server.broadcastMessage(msg.getSon(MainKey, "ForcedStop", BaseKey, getData(null)));
             return;
         }
+        List<String> list = new ArrayList<>(getTop().keySet());
+        if (list.size() <= 0) {
+            server.broadcastMessage(msg.getSon(MainKey, "StopButNoPlayer"));
+            return;
+        }
+        Map<String, Object> map = main.getRanking().getMap();
+        Double obj;
+        for (Map.Entry<String, Double> entry : FishTop.entrySet()) {
+            if (map.containsKey(entry.getKey())) {
+                obj = Tool.objToDouble(map.get(entry.getKey()), 0d);
+                if (obj < entry.getValue())
+                    map.put(entry.getKey(), entry.getValue());
+                continue;
+            }
+            map.put(entry.getKey(), entry.getValue());
+        }
+        main.getRanking().setAll(map);
+        main.getRanking().save();
+        server.broadcastMessage(msg.getSon(MainKey, "Stop", FishPlayerStopKey, new Object[]{list.get(0), getTop().get(list.get(0))}));
         super.run();
     }
 
-    public void sendMessage(Player player, String Message) {
-        server.broadcastMessage(msg.getSon(MainKey, Message, BaseKey, getData(player)));
-    }
-
     public static void setFishTop(Player player, double FishSIze) {
-    }
-
-    public static void setFishTop(String player, double FishSIze) {
-        double Size = FishTop.containsKey(player) ? FishTop.get(player) : 0;
-        FishTop.put(player, Math.max(FishSIze, Size));
+        double Size = FishTop.containsKey(player.getName()) ? FishTop.get(player.getName()) : 0;
+        FishTop.put(player.getName(), Math.max(FishSIze, Size));
     }
 
     private Object[] getData(Player player) {
         return new Object[]{Tool.getTimeBy(Time), Time, getTopString(), player == null ? "" : player.getName(), player == null ? "" : Whitejoy.getMyPlayer(player).getMoney(), FishCount, player == null ? 0 : getRank(player.getName())};
-    }
-
-    private Object[] getData(String player) {
-        return new Object[]{Tool.getTimeBy(Time), Time, getTopString(), player == null ? "" : player, player == null ? "" : Whitejoy.getMyPlayer(player).getMoney(), FishCount, player == null ? 0 : getRank(player)};
     }
 
     /**
@@ -131,8 +142,11 @@ public class MainGame extends Thread {
         LinkedHashMap<String, Double> map = getTop();
         List<String> list = new ArrayList<>(map.keySet());
         int Count = Whitejoy.getMain().getconfig().getInt("排名显示数量");
-        for (int i = 0; (Count <= 0 || i < Count) && i < list.size(); i++)
-            s += (s.isEmpty() ? "" : "\n") + msg.getSon(MainKey, "TopItem", BaseKey, getData(list.get(i)));
+        String playerName;
+        for (int i = 0; (Count <= 0 || i < Count) && i < list.size(); i++) {
+            playerName = list.get(i);
+            s += (s.isEmpty() ? "" : "\n") + msg.getSon(MainKey, "TopItem", BaseKeyByLow, new Object[]{Tool.getTimeBy(Time), Time, playerName, Whitejoy.getMyPlayer(playerName).getMoney(), FishCount});
+        }
         return s;
     }
 
@@ -146,7 +160,8 @@ public class MainGame extends Thread {
         if (player == null || player.isEmpty()) return 0;
         LinkedHashMap<String, Double> map = getTop();
         ArrayList<String> list = new ArrayList<>(map.keySet());
-        return list.indexOf(player);
+        int index = list.indexOf(player);
+        return index > 0 ? index : 1;
     }
 
     public static void addItem(BaseItem item) {

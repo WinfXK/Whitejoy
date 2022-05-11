@@ -30,12 +30,12 @@ public class Whitejoy extends MyBase implements Listener {
     public static final String CommandFileName = "Command.yml";
     public static final String[] Meta = {ConfigFileName, MessageFileName, CommandFileName};
     private static final Map<String, MyPlayer> MyPlayers = new HashMap<>();
-    private Itemlist itemlist = WinfxkLib.getMain().getItemlist();
     public static final String[] Load = {SBItemFileName};
-    private List<String> GameLevel = new ArrayList<>();
+    private final List<String> GameLevel = new ArrayList<>();
     private Config config, Ranking, Command;
     protected transient MainGame GameThread;
     protected static Whitejoy main;
+    private Itemlist itemlist;
     private Instant instant;
     private Message message;
     private File PlayerDir;
@@ -61,6 +61,10 @@ public class Whitejoy extends MyBase implements Listener {
         getLogger().info(message.getMessage("插件关闭", "{loadTime}", Tool.getTimeBy(Duration.between(instant, Instant.now()).toMillis())));
     }
 
+    public Config getRanking() {
+        return Ranking;
+    }
+
     public Config getconfig() {
         return config;
     }
@@ -78,6 +82,7 @@ public class Whitejoy extends MyBase implements Listener {
     @Override
     public void onEnable() {
         instant = Instant.now();
+        itemlist = WinfxkLib.getMain().getItemlist();
         new Check(this, Meta, new String[]{PlayerDirName}, Load).start();
         config = new Config(new File(getConfigDir(), ConfigFileName));
         message = new Message(this, new File(getConfigDir(), MessageFileName));

@@ -18,8 +18,8 @@ public abstract class MyCommand extends Command {
     protected static final String BaseKey = "Command";
     protected String CmdKey;
 
-    public MyCommand(String name) {
-        super(name.toLowerCase(Locale.ROOT), message.getSun(BaseKey, name, "description"), message.getSun(BaseKey, name, "usageMessage"), getAliases(name));
+    public MyCommand(String name,String cmd) {
+        super(cmd.toLowerCase(Locale.ROOT), message.getSun(BaseKey, name, "description"), message.getSun(BaseKey, name, "usageMessage"), getAliases(name));
         CmdKey = name;
     }
 

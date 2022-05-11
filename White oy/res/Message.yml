@@ -3,6 +3,7 @@ lang: chs
 插件关闭: '{RGBTextStart}{PluginName}关闭！本次运行时长： {loadTime}{RGBTextEnd}'
 权限不足: §4你没有权限执行这个操作。
 无法加载物品: §4无法加载物品§3{ItemID}§4！请检查数据。
+非玩家: §4请在游戏内执行此命令！
 Game:
   Countdown: §e[§9{PluginName}§e]§4钓王竞赛时间仅剩§d{Duration}§f(§b{GameTime}§4秒§f)§4！
   ErrorStop: §e[§9{PluginName}§e]§4钓王竞赛出现异常！为防止出现问题将停止本次竞赛...
@@ -14,25 +15,64 @@ Game:
   FishKick: §4可爱的小鱼不想看到你！
   Disaster: §4你钓上来一个{Name}，这简直是一个灾难！
   Sundries: §4你钓上来一个{Name}，这不知道是该哭还是该笑！
+  Stop: §e[§9{PluginName}§e]§4钓王竞赛结束！第一名为：{RandColor}{MaxPlayer}§4，战利品大小：{RandColor}{MaxSize}
+  StopButNoPlayer: §e[§9{PluginName}§e]§4钓王竞赛结束！
 Command:
   PlayerCommand:
     description: '{PluginName}主命令'
     usageMessage: '/WhiteJoy help'
     开始游戏: 开始游戏
+    结束游戏: 结束游戏
+    游戏结束: §4已发送结束屌王竞赛的请求！
+    游戏未开始: §4还没有已经开局的游戏！
     游戏已经开始: §4钓王竞赛已经开始！请勿重复开局！
 GameItemName:
   - "{RandColor}美人鱼"
   - "{RandColor}草鱼"
   - "{RandColor}乌龟鱼"
   - "{RandColor}草包鱼"
-  - "{RandColor}鲸鱼"
-  - "{RandColor}金鱼"
-  - "{RandColor}鲑鱼"
-  - "{RandColor}鲤鱼"
+  - "{RandColor}马大哈鱼"
+  - "{RandColor}大马哈鱼"
+  - "{RandColor}油鱼"
+  - "{RandColor}黄鳝"
+  - "{RandColor}泥鳅"
+  - "{RandColor}螃蟹鱼"
+  - "{RandColor}{Player}"
 GameItemLore:
   - '{RandColor}尺寸{RandColor}：{RandColor}{Length}{RandColor}，重量{RandColor}：{RandColor}{Size}'
 Shop:
   NotFile: §4无法打开对应的商店！请联系服务器管理员;
+  DeleteFish:
+    Title: §6删除货架
+    Content: " "
+    ShopItem: '§f{FishName}    §b大小：§f{Size}    §5重量：§f{Length}'
+    DeleteContent: '§4确定要删除这个商品吗？'
+    NotItem: §4没有可以删除的货物！
+    ReturnItem: §6返还货物
+    ReturnMoney: §6返还货币
+    ReturnServiceCharge: §6返还服务费
+  BuyFish:
+    Title: §6购买战利品
+    Buy: §6购买战利品
+    NotMoney: §4死穷逼给爷爬！
+    BuyOK: §4购买成功！
+    BanEconomy: §6当前商品使用的货币({UseEconomyName})已被禁用或不存在！！
+    Content: §6战利品名称：{FishName}{n}§6战利品大小：{FishSize}{n}§6战利品重量：{FishLength}{n}§6使用货币：{UseMoneyName}{n}§6售价：{Price}{n}{FishContent}
+  SellFish:
+    Title: §8战利品出售
+    EconomyAPIError: §4无法加载手续费货币支持！请检查！
+    Content: '{RandColor}请选择一个您想要上架出售的战利品{n}请注意!!{n}1.自行下架战利品将不会返还手续费和物品！{n}2.上架可能会删除您的排名！{n}3.上架战利品可能会将你的排名转移给别人。'
+    SelectItem: §4请选择想要上架的物品
+    SelectEconomy: §4请选择想要使用的货币
+    InputMoney: §5请输入物品价格
+    InputContent: §2请输入货架介绍
+    InputMoneySB: §4你还没有输入物品价格或物品价格不合法(仅支持大于零的纯数字)！
+    DefaultContent: §8走过路过不要错过
+    EconomyItem: §e{UseEconomyName}§f(§8{UseMoneyName}§f)
+    ItemError: §4选择的物品不是钓王物品
+    OK: §4上架成功！
+    NotServiceCharge: §4您的{UseMoneyName}不足以支付上架手续费！
+    NotFish: §4死黑逼啥JB玩意都没有还想学别人来出售战利品？？滚一边去吧。
   Main:
     Title: 钓王商店
     Content: " "
@@ -40,3 +80,5 @@ Shop:
     SellFish: '{RandColor}出售战利品'
     Setting: '{RandColor}系统设置'
     DelFish: '{RandColor}删除物品'
+    soldOutOK: §4您下架了一个物品。
+    soldOutContent: §4确定下架您的商品？{n}§f{FishName}    §b大小：§f{Size}    §5重量：§f{Length}{FishContent}

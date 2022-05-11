@@ -10,6 +10,7 @@ import cn.winfxk.nukkit.winfxklib.Message;
 import cn.winfxk.nukkit.winfxklib.WinfxkLib;
 import cn.winfxk.nukkit.winfxklib.tool.Config;
 import cn.winfxk.nukkit.winfxklib.tool.Enchantlist;
+import cn.winfxk.nukkit.winfxklib.tool.Itemlist;
 import cn.winfxk.nukkit.winfxklib.tool.Tool;
 
 import java.io.File;
@@ -20,7 +21,7 @@ public class FishPlayer {
     private static int SBItemCount = 0;
     private static final String[] SBFishKey = {"{Name}"};
     private static final Whitejoy main = Whitejoy.getMain();
-    private final static Map<String, Item> SBItem = new HashMap<>();
+    final static Map<String, Item> SBItem = new HashMap<>();
     private static final List<String> BlockPlayer = new ArrayList<>();
     private static final Message msg = Whitejoy.getMain().getMessage();
     private final static Data SBRand = new Data(), FiveRand = new Data();
@@ -60,7 +61,12 @@ public class FishPlayer {
                     item = main.getItemlist().getItem(s).getItem();
                 } else {
                     array = s.split("\\|");
-                    item = main.getItemlist().getItem(array[0]).getItem();
+                    Itemlist itemlist = main.getItemlist().getItem(array[0]);
+                    if (itemlist == null) {
+                        main.getLogger().error(msg.getMessage("无法加载物品", "{ItemID}", entry.getKey()));
+                        continue;
+                    }
+                    item = itemlist.getItem();
                     if (item == null) {
                         main.getLogger().error(msg.getMessage("无法加载物品", "{ItemID}", entry.getKey()));
                         continue;
@@ -111,21 +117,21 @@ public class FishPlayer {
 
     protected void Start() {
         if (BlockPlayer.contains(player.getName().toLowerCase(Locale.ROOT))) return;
-        if (Tool.getRand(0, SBRand.Max) < SBRand.Min) {
+        if (SBModle && Tool.getRand(0, SBRand.Max) < SBRand.Min) {
             BaseItem item = MainGame.getItem();
             if (item == null) return;
             item.handle(player);
             player.sendMessage(Whitejoy.getMain().getMessage().getSon("Game", "Disaster", SBFishKey, new Object[]{item.getName()}, player));
             return;
         }
-        if (Tool.getRand(0, FiveRand.Max) < FiveRand.Min) {
+        if (FiveModle && Tool.getRand(0, FiveRand.Max) < FiveRand.Min) {
             event.setLoot(getItem());
             player.sendMessage(Whitejoy.getMain().getMessage().getSon("Game", "Sundries", SBFishKey, new Object[]{item.getName()}, player));
             return;
         }
-        double Size = getSize();
         double Length = getLength();
-        Item item = event.getLoot();
+        double Size = getSize(Length);
+        Item item = Item.get(349);
         List<String> list = Whitejoy.getMain().getMessage().getConfig().getList("GameItemName", new ArrayList<>());
         String string = list.get(Tool.getRand(0, list.size() - 1));
         if (string != null)
@@ -143,16 +149,18 @@ public class FishPlayer {
         }
         CompoundTag nbt = item.getNamedTag();
         nbt = nbt == null ? new CompoundTag() : nbt;
+        nbt.putDouble("Size", Size);
+        nbt.putDouble("Length", Length);
         nbt.putString(main.getName(), main.getName());
         item.setNamedTag(nbt);
         event.setLoot(item);
-        MainGame.setFishTop(player, Length * Size);
-        Object[] objects = new Object[]{Tool.getTimeBy(Whitejoy.getMain().GameThread.Time), Whitejoy.getMain().GameThread.Time, Whitejoy.getMain().GameThread.getTopString(), player.getName(), Whitejoy.getMyPlayer(player).getMoney(), MainGame.FishCount, MainGame.getRank(player.getName()), item.getName(), Size, Length};
+        MainGame.setFishTop(player, Size);
+        Object[] objects = new Object[]{Tool.getTimeBy(Whitejoy.getMain().GameThread.Time), Whitejoy.getMain().GameThread.Time, Whitejoy.getMain().GameThread.getTopString(), player.getName(), Whitejoy.getMyPlayer(player).getMoney(), ++MainGame.FishCount, MainGame.getRank(player.getName()), item.getName(), Size, Length};
         Server.getInstance().broadcastMessage(Whitejoy.getMain().getMessage().getSon("Game", "NewFish", BaseKey, objects));
     }
 
 
-    private double getSize() {
+    private double getSize(double Length) {
         int i = Tool.getRand(1, 20);
         int Size;
         if (i < 2) {
@@ -163,7 +171,9 @@ public class FishPlayer {
             Size = Tool.getRand(100, 200);
         } else
             Size = Tool.getRand(1, 100);
-        return Size + ((double) Tool.getRand(1, 100) / 100);
+        double sb = Length / 2d;
+        sb = sb == 0 ? 0.1 : sb;
+        return Tool.Double2((double) (Size / 2) * sb);
     }
 
     private double getLength() {
@@ -176,7 +186,7 @@ public class FishPlayer {
         } else {
             Length = Tool.getRand(1, 3);
         }
-        return Length + ((double) Tool.getRand(1, 10) / 10);
+        return Tool.Double2(Length + ((double) Tool.getRand(1, 10) / 10));
     }
 
     protected static Item getItem() {
