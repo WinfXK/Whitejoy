@@ -17,6 +17,15 @@ Game:
   Sundries: §4你钓上来一个{Name}，这不知道是该哭还是该笑！
   Stop: §e[§9{PluginName}§e]§4钓王竞赛结束！第一名为：{RandColor}{MaxPlayer}§4，战利品大小：{RandColor}{MaxSize}
   StopButNoPlayer: §e[§9{PluginName}§e]§4钓王竞赛结束！
+  GiveTopItem: §4恭喜获得第{Rank}名，对应的奖励已发放！
+  SBItem:
+    Damage: 会咬人的小鱼
+    Death: 氢弹
+    DropItem: 小偷鱼
+    Kick: 飞毛腿
+    Oligemia: 吸血鱼
+    Poisoning: 辐射鱼
+    Transfer: 四维鱼
 Command:
   PlayerCommand:
     description: '{PluginName}主命令'
@@ -26,6 +35,7 @@ Command:
     游戏结束: §4已发送结束屌王竞赛的请求！
     游戏未开始: §4还没有已经开局的游戏！
     游戏已经开始: §4钓王竞赛已经开始！请勿重复开局！
+    游戏商店: §4游戏商店
 GameItemName:
   - "{RandColor}美人鱼"
   - "{RandColor}草鱼"
@@ -40,8 +50,11 @@ GameItemName:
   - "{RandColor}{Player}"
 GameItemLore:
   - '{RandColor}尺寸{RandColor}：{RandColor}{Length}{RandColor}，重量{RandColor}：{RandColor}{Size}'
-Shop:
+Form:
   NotFile: §4无法打开对应的商店！请联系服务器管理员;
+  Back: '{RandColor}返回'
+  Exit: '{RandColor}关闭'
+  Confirm: '{RandColor}确定'
   DeleteFish:
     Title: §6删除货架
     Content: " "
@@ -49,8 +62,10 @@ Shop:
     DeleteContent: '§4确定要删除这个商品吗？'
     NotItem: §4没有可以删除的货物！
     ReturnItem: §6返还货物
-    ReturnMoney: §6返还货币
     ReturnServiceCharge: §6返还服务费
+    DelMessage: §4您上架的物品{FishName}已被管理员删除！
+    DelItem: '{n}§4所上架的物品已被删除！'
+    DelOK: §4删除成功！
   BuyFish:
     Title: §6购买战利品
     Buy: §6购买战利品

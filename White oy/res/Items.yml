@@ -23,3 +23,34 @@
   Oligemia: 1
   Poisoning: 10
   Transfer: 10
+奖励:
+  第一名:
+    Items:
+      Item1:
+        Nbt: !!binary |-
+          CgAACQQAZW5jaAoBAAAAAgMAbHZsAQACAgBpZBgAAAoHAGRpc3BsYXkJBABMb3JlCAEAAABFAMKnOOern+eEtuWmguatpOWlveWQg++8geaEn+inieWQg+S6huWug+aJi+WIg+acjeS4u+S4jeaYr+S7gOS5iOmXrumimAgEAE5hbWV0AMKnZOiiq8KnNua1t8KnZuawtMKnOOa1uMKnNeazocKnMuS6hsKnNTHCpzkwwqc0MMKnMTjCpzE2wqcy5bm0wqc05Y+Ywqc45b6Xwqc46LaFwqcx57qnwqc35aW9wqc25ZCDwqcz55qEwqdk6L6jwqdi5p2hAAA=
+        ID: 367
+        Count: 70
+        Damage: 0
+        Name: §d被§6海§f水§8浸§5泡§2了§51§90§40§18§16§2年§4变§8得§8超§1级§7好§6吃§3的§d辣§b条
+      Item4: 钻石
+    Economys:
+      Money1:
+        ID: WC_Vault
+        Money: 1100
+    Commands:
+      - op|give {Player} 1 10
+  第2名:
+    Items:
+      Item1:
+        Nbt: !!binary |-
+          CgAACQQAZW5jaAoBAAAAAgMAbHZsAQACAgBpZBgAAAoHAGRpc3BsYXkJBABMb3JlCAEAAABFAMKnOOern+eEtuWmguatpOWlveWQg++8geaEn+inieWQg+S6huWug+aJi+WIg+acjeS4u+S4jeaYr+S7gOS5iOmXrumimAgEAE5hbWV0AMKnZOiiq8KnNua1t8KnZuawtMKnOOa1uMKnNeazocKnMuS6hsKnNTHCpzkwwqc0MMKnMTjCpzE2wqcy5bm0wqc05Y+Ywqc45b6Xwqc46LaFwqcx57qnwqc35aW9wqc25ZCDwqcz55qEwqdk6L6jwqdi5p2hAAA=
+        ID: 367
+        Count: 70
+        Damage: 0
+        Name: §d被§6海§f水§8浸§5泡§2了§51§90§40§18§16§2年§4变§8得§8超§1级§7好§6吃§3的§d辣§b条
+      Item4: 泥土
+    Economys:
+      Money1:
+        ID: WC_Vault
+        Money: 1100
