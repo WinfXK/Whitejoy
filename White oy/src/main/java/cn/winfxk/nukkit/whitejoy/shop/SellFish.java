@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.form.response.FormResponseCustom;
 import cn.nukkit.item.Item;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.winfxk.nukkit.whitejoy.shop.BaseForm;
 import cn.winfxk.nukkit.winfxklib.WinfxkLib;
 import cn.winfxk.nukkit.winfxklib.form.BaseFormin;
 import cn.winfxk.nukkit.winfxklib.form.api.CustomForm;
@@ -22,7 +23,7 @@ public class SellFish extends BaseForm {
     private final Config config;
     private final List<Item> items = new ArrayList<>();
     private final List<MyEconomy> Economys = new ArrayList<>();
-    private static final String[] EconomyKey = {"{UseEconomyName}", "{UseMoneyName}"};
+    public static final String[] EconomyKey = {"{UseEconomyName}", "{UseMoneyName}"};
     private static MyEconomy economy;
     private static Double ServiceCharge;
 
@@ -77,7 +78,7 @@ public class SellFish extends BaseForm {
         if (nbt == null || nbt.getString(main.getName()) == null || !nbt.getString(main.getName()).equals(main.getName()))
             return makeShow(true, player.getName(), getTitle(), getString("ItemError"), getConfirm(), (a, b) -> MakeForm(), getExitString(), (a, b) -> false);
         ShopItem.put("Item", Tool.saveItem(item));
-        ShopItem.put("Length", nbt.getDouble("Size"));
+        ShopItem.put("Length", nbt.getDouble("Length"));
         ShopItem.put("Size", nbt.getDouble("Size"));
         ShopItem.put("Player", player.getName());
         ShopItem.put("Economy", economy.getEconomyName());

@@ -3,9 +3,15 @@ package cn.winfxk.nukkit.whitejoy;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.player.PlayerFishEvent;
+import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
+import cn.nukkit.level.Sound;
+import cn.nukkit.level.particle.ExplodeParticle;
+import cn.nukkit.level.particle.Particle;
+import cn.nukkit.math.Vector3;
 import cn.winfxk.nukkit.whitejoy.cmd.PlayerCommand;
 import cn.winfxk.nukkit.whitejoy.shop.WC_Vault;
 import cn.winfxk.nukkit.winfxklib.Check;
@@ -42,9 +48,27 @@ public class Whitejoy extends MyBase implements Listener {
     private File PlayerDir;
 
     @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        if (!MainGame.StartGame && event.getItem().getId() == 346) event.setCancelled();
+    }
+
+    @EventHandler
     public void onFish(PlayerFishEvent event) {
         Player player = event.getPlayer();
-        if (!MainGame.StartGame || !GameLevel.contains(player.getLevel().getFolderName().toLowerCase(Locale.ROOT)))
+        if (!MainGame.StartGame) {
+            if (Tool.getRand(1, 1000) <= 10) {
+                player.getLevel().addSound(player, Sound.RANDOM_EXPLODE);
+                for (int i = 0; i < 50; i++)
+                    player.getLevel().addParticle(new ExplodeParticle(new Vector3(player.x + ((double) Tool.getRand(-10, 10) / 10), player.y + ((double) Tool.getRand(-10, 10) / 10), player.z + ((double) Tool.getRand(-10, 10) / 10))));
+                player.sendMessage(message.getSon("Game", "NotGameTimeStartGame", player));
+                FishEntity fish = new FishEntity(player);
+                boolean abc = player.attack(new EntityDamageEvent(fish, EntityDamageEvent.DamageCause.ENTITY_ATTACK, (float) Tool.getRand(1, Math.max(player.getHealth(), 2))));
+                fish.kill();
+            }
+            event.setCancelled();
+            return;
+        }
+        if (!GameLevel.contains(player.getLevel().getFolderName().toLowerCase(Locale.ROOT)))
             return;
         new FishPlayer(event).Start();
     }

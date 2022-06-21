@@ -18,6 +18,7 @@ Game:
   Stop: §e[§9{PluginName}§e]§4钓王竞赛结束！第一名为：{RandColor}{MaxPlayer}§4，战利品大小：{RandColor}{MaxSize}
   StopButNoPlayer: §e[§9{PluginName}§e]§4钓王竞赛结束！
   GiveTopItem: §4恭喜获得第{Rank}名，对应的奖励已发放！
+  NotGameTimeStartGame: §4你钓什么几把玩意？
   SBItem:
     Damage: 会咬人的小鱼
     Death: 氢弹
@@ -95,5 +96,23 @@ Form:
     SellFish: '{RandColor}出售战利品'
     Setting: '{RandColor}系统设置'
     DelFish: '{RandColor}删除物品'
+    SystemShop: '{RandColor}添加系统商店'
+    SystemShopContent: " "
+    SelectEconomy: §4请选择想要使用的货币
+    InputButtonText: §4请输入系统商店的按钮文本
+    ButtonText: '{RandColor}系统回收商店'
+    FishMoneyBit: §4请输入货物价格增幅(尺寸x重量x增幅=价格)
+    EconomyAPISB: §4选择的经济不再受支持！
+    RateSB: §4价格倍率只能为大于零的纯数字！
+    addSystemShopOK: §4系统商店添加成功！
     soldOutOK: §4您下架了一个物品。
+    EconomyItem: §e{UseEconomyName}§f(§8{UseMoneyName}§f)
     soldOutContent: §4确定下架您的商品？{n}§f{FishName}    §b大小：§f{Size}    §5重量：§f{Length}{FishContent}
+  SystemShop:
+    Title: 钓王商店
+    Content: " "
+    ItemText: '§b{ItemName}§5  价值§f: §8{ItemMoney}'
+    SelectItem: §4请选择想要上架的物品
+    notItem: §4你没有可以上架的物品
+    EconomyAPISB: §4选择的经济不再受支持！
+    SellOK: §4成功出售§5{ItemName}§4！获得§6{ItemMoney}
