@@ -12,6 +12,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
+    <orderEntry type="library" name="Maven: top.wcpe.wcvault:WC_Vault:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.WinfXK:WinfxkLib:1.1.22.6.19.12.33" level="project" />
     <orderEntry type="library" name="Maven: org.powernukkit:powernukkit:1.6.0.1-PN" level="project" />
     <orderEntry type="library" name="Maven: org.powernukkit.bedrock.network:raknet:1.6.28-PN.3" level="project" />

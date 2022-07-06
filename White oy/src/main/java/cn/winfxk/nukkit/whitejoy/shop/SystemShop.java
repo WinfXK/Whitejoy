@@ -60,7 +60,7 @@ public class SystemShop extends BaseForm {
         double Size = nbt.getDouble("Size");
         double Length = nbt.getDouble("Length");
         double Rate = Tool.objToDouble(ItemMap.get("Rate"));
-        double Money = Size * Length * Rate * item.count;
+        double Money = Tool.Double2(Size * Length * Rate * item.count);
         player.getInventory().removeItem(item);
         economy.addMoney(player, Money);
         return sendMessage(getString("SellOK", ItemKey, new Object[]{item.hasCustomName() ? item.getCustomName() : itemlist.getName(item), item.getId(), item.getDamage(), Money, Length, Size, Rate})) & isBack();
@@ -78,7 +78,7 @@ public class SystemShop extends BaseForm {
             Size = nbt.getDouble("Size");
             Length = nbt.getDouble("Length");
             Rate = Tool.objToDouble(ItemMap.get("Rate"));
-            Money = Size * Length * Rate * item.count;
+            Money = Tool.Double2(Size * Length * Rate * item.count);
             list.add(getString("ItemText", ItemKey, new Object[]{item.hasCustomName() ? item.getCustomName() : itemlist.getName(item), item.getId(), item.getDamage(), Money, Length, Size, Rate}));
             items.add(item);
         }

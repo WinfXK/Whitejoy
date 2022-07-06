@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class Shop extends BaseForm {
     protected final File file;
-    protected final Config config;
+    protected Config config;
     protected Map<String, Object> shops;
     protected static final String[] FishKey = {"{FishName}", "{Player}", "{Money}", "{Size}", "{Length}", "{FishPlayer}", "{FishMoney}", "{FishPlayerMoney}", "{FishContent}"};
     protected List<MyEconomy> economies;
@@ -30,22 +30,25 @@ public class Shop extends BaseForm {
         super(player, Update, isBack);
         if (file == null)
             file = new File(main.getConfigDir(), Whitejoy.ShopFileName);
-        config = new Config(this.file = file);
         FormKey = "Main";
+        this.file = file;
     }
 
     @Override
     public boolean MakeForm() {
         if (file == null)
             return makeShow(player, message.getSon(MainKey, "NotFile", this));
+        config = new Config(this.file);
         Object obj = config.get("Shops");
         shops = obj instanceof Map ? (Map<String, Object>) obj : new HashMap<>();
         SimpleForm form = new SimpleForm(getID(), getTitle(), getContent());
         boolean MyShop = WinfxkLib.getconfig().getBoolean("个人商店");
+        int index = 0;
         for (Map.Entry<String, Object> entry : shops.entrySet()) {
             final Map<String, Object> ShopItem = entry.getValue() instanceof Map ? (Map<String, Object>) entry.getValue() : new HashMap<>();
             if (ShopItem.size() <= 0) continue;
             if (Tool.ObjToBool(ShopItem.get("SystemShop"))) {
+                index++;
                 form.addButton(message.getText(ShopItem.get("ButtonText")), true, "textures/items/fish_raw.png", (player1, formResponse) -> show(new SystemShop(player1, this, true, (Map<String, Object>) entry.getValue())));
                 continue;
             }
@@ -53,15 +56,18 @@ public class Shop extends BaseForm {
             obj = ShopItem.get("Item");
             if (!(obj instanceof Map)) continue;
             Item Fish = Tool.loadItem((Map<String, Object>) obj);
+            index++;
             form.addButton(getShopItem(ShopItem, Fish), true, itemlist.getItem(Fish).getPath(), (a, b) -> {
                 if (ShopItem.get("Player").equals(player.getName()))
                     return soldOut(entry.getKey(), ShopItem, Fish);
                 return show(new BuyFish(player, this, true, file, entry.getKey()));
             });
         }
-        form.addButton(getString("SellFish"), (a, b) -> show(new SellFish(a, this, true, file)));
+        if (MyShop)
+            form.addButton(getString("SellFish"), (a, b) -> show(new SellFish(a, this, true, file)));
         if (player.hasPermission("Whitejoy.Command.Admin")) {
-            form.addButton(getString("DelFish"), (a, b) -> show(new DeleteFish(a, this, true, file)));
+            if (index > 0)
+                form.addButton(getString("DelFish"), (a, b) -> show(new DeleteFish(a, this, true, file)));
             form.addButton(getString("SystemShop"), (a, b) -> addSystemShop());
         }
         form.addButton(getBack(), (a, b) -> isBack());

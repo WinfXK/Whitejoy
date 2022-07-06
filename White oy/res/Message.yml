@@ -4,6 +4,13 @@ lang: chs
 权限不足: §4你没有权限执行这个操作。
 无法加载物品: §4无法加载物品§3{ItemID}§4！请检查数据。
 非玩家: §4请在游戏内执行此命令！
+Economy:
+  EconomyIDisEmpty: §4货币ID识别错误！
+  MoneyNameisEmpty: §4货币名称识别错误！
+  EconomyTypeisEmpty: §4货币类型识别错误！
+  addFail: §4无法添加该货币{newEconomyName}！原因未知！
+  EconomyBlock: §4无法添加该货币{newEconomyName}！可能是该货币已被列入黑名单！
+  EconomyExist: §4无法添加该货币{newEconomyName}！可能是该货币已经存在！请更换ID后重试！
 Game:
   Countdown: §e[§9{PluginName}§e]§4钓王竞赛时间仅剩§d{Duration}§f(§b{GameTime}§4秒§f)§4！
   ErrorStop: §e[§9{PluginName}§e]§4钓王竞赛出现异常！为防止出现问题将停止本次竞赛...
@@ -12,6 +19,7 @@ Game:
   NewFish: §e[§9{PluginName}§e]§4第§5{FishCount}§4条鱼由§8{Player}§4发现！尺寸：{Length}，重量：{Size}，当前排名:{Rank}
   TopItem: §e[§9{Player}§e]§f>§b>§d>§e{Rank}
   MyEntityName: '{RGBTextStart}一条欢乐的小鱼{RGBTextEnd}'
+  GameTime: §4钓王竞赛剩余时间：§d{Duration}  §4您当前排名：§5{Rank}   §4玩家数：§8{PlayerSize}
   FishKick: §4可爱的小鱼不想看到你！
   Disaster: §4你钓上来一个{Name}，这简直是一个灾难！
   Sundries: §4你钓上来一个{Name}，这不知道是该哭还是该笑！
@@ -37,6 +45,12 @@ Command:
     游戏未开始: §4还没有已经开局的游戏！
     游戏已经开始: §4钓王竞赛已经开始！请勿重复开局！
     游戏商店: §4游戏商店
+    游戏排行: 排行榜
+    RankItem: §4{Top}:> §5{PlayerName} §5{Size}
+    RandMessage: §6当前排行榜如下：{n}
+    NotRank: §6当前暂无排名！
+    GameNotStart: §4游戏尚未开始！
+    游戏总排行: 游戏总排行
 GameItemName:
   - "{RandColor}美人鱼"
   - "{RandColor}草鱼"

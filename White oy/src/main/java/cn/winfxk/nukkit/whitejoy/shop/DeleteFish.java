@@ -7,6 +7,7 @@ import cn.winfxk.nukkit.winfxklib.form.BaseFormin;
 import cn.winfxk.nukkit.winfxklib.form.api.CustomForm;
 import cn.winfxk.nukkit.winfxklib.form.api.SimpleForm;
 import cn.winfxk.nukkit.winfxklib.module.LeaveWord;
+import cn.winfxk.nukkit.winfxklib.tool.Config;
 import cn.winfxk.nukkit.winfxklib.tool.Tool;
 
 import java.io.File;
@@ -26,25 +27,34 @@ public class DeleteFish extends Shop {
     public boolean MakeForm() {
         if (file == null)
             return makeShow(player, message.getSon(MainKey, "NotFile", this));
+        config = new Config(this.file);
         Object obj = config.get("Shops");
-        shops = obj instanceof Map ? (Map<String, Object>) obj : new HashMap<>();
+        Map<String, Object> shops2 = shops = obj instanceof Map ? (Map<String, Object>) obj : new HashMap<>();
         if (shops.size() <= 0)
             return makeShow(true, player.getName(), getTitle(), getString("NotItem"), getBack(), (aa, a) -> isBack(), getExitString(), (ab, bb) -> false);
         SimpleForm form = new SimpleForm(getID(), getTitle(), getContent());
         for (Map.Entry<String, Object> entry : shops.entrySet()) {
             final Map<String, Object> ShopItem = entry.getValue() instanceof Map ? (Map<String, Object>) entry.getValue() : new HashMap<>();
             if (ShopItem.size() <= 0) continue;
+            if (Tool.ObjToBool(ShopItem.get("SystemShop"))) {
+                form.addButton(message.getText(ShopItem.get("ButtonText")), (player1, formResponse) -> {
+                    shops2.remove(entry.getKey());
+                    config.set("Shops", shops = shops2);
+                    return config.save() & sendMessage(getString("DelOK")) & isBack();
+                });
+                continue;
+            }
             obj = ShopItem.get("Item");
             if (!(obj instanceof Map)) continue;
             Item Fish = Tool.loadItem((Map<String, Object>) obj);
-            form.addButton(getShopItem(ShopItem, Fish), true, itemlist.getItem(Fish).getPath(), (a, b) -> Del(ShopItem, Fish));
+            form.addButton(getShopItem(ShopItem, Fish), true, itemlist.getItem(Fish).getPath(), (a, b) -> Del(ShopItem, Fish, entry.getKey()));
         }
         form.addButton(getBack(), (a, b) -> isBack());
         form.show(player);
         return true;
     }
 
-    private boolean Del(Map<String, Object> shopItem, Item fish) {
+    private boolean Del(Map<String, Object> shopItem, Item fish, String Key) {
         CustomForm form = new CustomForm(getID(), getTitle());
         form.addLabel(getString("DeleteContent", FishKey, getData(shopItem, fish)));
         form.addToggle(getString("ReturnItem"), true);
@@ -59,7 +69,9 @@ public class DeleteFish extends Shop {
                 items.add(fish);
             if (ReturnServiceCharge)
                 economies.add(new LeaveWord.Economy(Tool.objToString(shopItem.get("ServiceEconomy")), Tool.objToDouble(shopItem.get("Money"))));
-            return LeaveWord.addLeaveWord(Tool.objToString(shopItem.get("Player")), getTitle(), getString("DelMessage") + (!ReturnItem ? getString("DelItem") : ""), items, economies) & sendMessage(getString("DelOK"));
+            shops.remove(Key);
+            config.set("Shops", shops);
+            return config.save() & LeaveWord.addLeaveWord(Tool.objToString(shopItem.get("Player")), getTitle(), getString("DelMessage") + (!ReturnItem ? getString("DelItem") : ""), items, economies) & sendMessage(getString("DelOK")) & isBack();
         });
         return true;
     }

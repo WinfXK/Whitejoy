@@ -1,6 +1,7 @@
 package cn.winfxk.nukkit.whitejoy;
 
 import cn.nukkit.Player;
+import cn.nukkit.utils.DummyBossBar;
 import cn.winfxk.nukkit.winfxklib.MyPlayerin;
 import cn.winfxk.nukkit.winfxklib.tool.Config;
 
@@ -10,6 +11,7 @@ public class MyPlayer extends MyPlayerin {
     private final Config config;
     private final File file;
     private static Whitejoy main = Whitejoy.getMain();
+    public DummyBossBar bossBar;
 
     public MyPlayer(Player player) {
         super(player);

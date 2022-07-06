@@ -8,6 +8,10 @@ website: http://winfxk.cn
 author: Winfxk
 depend:
   - WinfxkLib
+softdepend:
+  - WC-Vault
+loadBefore:
+  - WC-Vault
 permissions:
   Whitejoy.Command.Main:
     description: 钓王主命令命令

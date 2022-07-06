@@ -54,43 +54,41 @@ public class SellFish extends BaseForm {
         form.addDropdown(getString("SelectEconomy"), getEconomys());
         form.addInput(getString("InputMoney"), "", getString("InputMoney"));
         form.addInput(getString("InputContent"), message.getConfig().getMap("Shop", new MyMap<>()).getMap("SellFish", new MyMap<>()).get("DefaultContent"), getString("InputContent"));
-        form.show(player, null, (a, b) -> isBack());
+        form.show(player, ((player1, d) -> {
+            FormResponseCustom data = (FormResponseCustom) d;
+            Item item = items.get(data.getDropdownResponse(1).getElementID());
+            MyEconomy economy = Economys.get(data.getDropdownResponse(2).getElementID());
+            String s = data.getInputResponse(3);
+            double Money = Tool.objToDouble(s);
+            if (s == null || s.isEmpty() || !Tool.isInteger(s) || Money <= 0)
+                return makeShow(true, player.getName(), getTitle(), getString("InputMoneySB"), getConfirm(), (a, b) -> MakeForm(), getExitString(), (a, b) -> false);
+            String Content = data.getInputResponse(4);
+            int index = main.getconfig().getInt("商店个性化介绍上限");
+            Content = Content == null ? "" : Content.length() > index ? Content.substring(0, index) : Content;
+            Map<String, Object> Shops = config.getMap("Shops", new MyMap<>());
+            String Key = Tool.getRandColor();
+            while (Shops.containsKey(Key))
+                Key += Tool.getRandColor();
+            Map<String, Object> ShopItem = new HashMap<>();
+            CompoundTag nbt = item.getNamedTag();
+            if (nbt == null || nbt.getString(main.getName()) == null || !nbt.getString(main.getName()).equals(main.getName()))
+                return makeShow(true, player.getName(), getTitle(), getString("ItemError"), getConfirm(), (a, b) -> MakeForm(), getExitString(), (a, b) -> false);
+            ShopItem.put("Item", Tool.saveItem(item));
+            ShopItem.put("Length", nbt.getDouble("Length"));
+            ShopItem.put("Size", nbt.getDouble("Size"));
+            ShopItem.put("Player", player.getName());
+            ShopItem.put("Economy", economy.getEconomyName());
+            ShopItem.put("Content", Content);
+            ShopItem.put("ServiceCharge", ServiceCharge);
+            ShopItem.put("ServiceEconomy", economy.getEconomyName());
+            ShopItem.put("Money", Money);
+            Shops.put(Key, ShopItem);
+            config.set("Shops", Shops);
+            player.getInventory().remove(item);
+            economy.reduceMoney(player, ServiceCharge);
+            return super.DisposeCustom(data) & config.save() & sendMessage(getString("OK"));
+        }), (a, b) -> isBack());
         return true;
-    }
-
-    @Override
-    public boolean DisposeCustom(FormResponseCustom data) {
-        Item item = items.get(data.getDropdownResponse(1).getElementID());
-        MyEconomy economy = Economys.get(data.getDropdownResponse(2).getElementID());
-        String s = data.getInputResponse(3);
-        double Money = Tool.objToDouble(s);
-        if (s == null || s.isEmpty() || !Tool.isInteger(s) || Money <= 0)
-            return makeShow(true, player.getName(), getTitle(), getString("InputMoneySB"), getConfirm(), (a, b) -> MakeForm(), getExitString(), (a, b) -> false);
-        String Content = data.getInputResponse(4);
-        int index = main.getconfig().getInt("商店个性化介绍上限");
-        Content = Content == null ? "" : Content.length() > index ? Content.substring(0, index) : Content;
-        Map<String, Object> Shops = config.getMap("Shops", new MyMap<>());
-        String Key = Tool.getRandColor();
-        while (Shops.containsKey(Key))
-            Key += Tool.getRandColor();
-        Map<String, Object> ShopItem = new HashMap<>();
-        CompoundTag nbt = item.getNamedTag();
-        if (nbt == null || nbt.getString(main.getName()) == null || !nbt.getString(main.getName()).equals(main.getName()))
-            return makeShow(true, player.getName(), getTitle(), getString("ItemError"), getConfirm(), (a, b) -> MakeForm(), getExitString(), (a, b) -> false);
-        ShopItem.put("Item", Tool.saveItem(item));
-        ShopItem.put("Length", nbt.getDouble("Length"));
-        ShopItem.put("Size", nbt.getDouble("Size"));
-        ShopItem.put("Player", player.getName());
-        ShopItem.put("Economy", economy.getEconomyName());
-        ShopItem.put("Content", Content);
-        ShopItem.put("ServiceCharge", ServiceCharge);
-        ShopItem.put("ServiceEconomy", economy.getEconomyName());
-        ShopItem.put("Money", Money);
-        Shops.put(Key, ShopItem);
-        config.set("Shops", Shops);
-        player.getInventory().remove(item);
-        economy.reduceMoney(player, ServiceCharge);
-        return super.DisposeCustom(data) & config.save() & sendMessage(getString("OK"));
     }
 
     public List<String> getItems() {

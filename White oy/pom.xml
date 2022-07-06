@@ -12,6 +12,11 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>top.wcpe.wcvault</groupId>
+            <artifactId>WC_Vault</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.WinfXK</groupId>
             <artifactId>WinfxkLib</artifactId>
             <version>1.1.22.6.19.12.33</version>

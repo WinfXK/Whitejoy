@@ -3,6 +3,7 @@ package cn.winfxk.nukkit.whitejoy;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.DummyBossBar;
 import cn.winfxk.nukkit.whitejoy.sbitem.*;
 import cn.winfxk.nukkit.winfxklib.Message;
 import cn.winfxk.nukkit.winfxklib.module.LeaveWord;
@@ -11,10 +12,12 @@ import cn.winfxk.nukkit.winfxklib.tool.ItemLoad;
 import cn.winfxk.nukkit.winfxklib.tool.MyMap;
 import cn.winfxk.nukkit.winfxklib.tool.Tool;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class MainGame extends Thread {
     public static final String[] BaseKey = {"{Duration}", "{GameTime}", "{Top}", "{Player}", "{Money}", "{FishCount}", "{Rank}"};
+    public static final String[] GameTimeKey = {"{Duration}", "{GameTime}", "{Player}", "{Money}", "{FishCount}", "{Rank}", "{PlayerSize}"};
     public static final String[] BaseKeyByLow = {"{Duration}", "{GameTime}", "{Player}", "{Money}", "{FishCount}"};
     public static final String[] FishPlayerStopKey = {"{MaxPlayer}", "{MaxSize}"};
     protected static final Map<String, BaseItem> BaseItems = new HashMap<>();
@@ -27,8 +30,8 @@ public class MainGame extends Thread {
     private static final String MainKey = "Game";
     static int FishCount = 0;
     private static Integer ItemCount;
-    protected int Time;
-    private static List<TopItem> topItems = new ArrayList<>();
+    protected int Time, initialTime;
+    private static final List<TopItem> topItems = new ArrayList<>();
 
     static {
         addItem(new DropItem());
@@ -39,6 +42,7 @@ public class MainGame extends Thread {
         addItem(new Kick());
         addItem(new Poisoning());
         relaod();
+
     }
 
     public static synchronized void relaod() {
@@ -83,10 +87,11 @@ public class MainGame extends Thread {
     }
 
     public MainGame(int Time) {
-        this.Time = Time;
+        this.Time = initialTime = Time;
+        FishTop.clear();
     }
 
-    public static void setFishTop(Player player, Double size) {
+    public static void setFishTop(@Nonnull Player player, Double size) {
         FishTop.put(player.getName(), size);
     }
 
@@ -101,11 +106,35 @@ public class MainGame extends Thread {
         StartGame = true;
         boolean ErrorExit = true;
         server.broadcastMessage(msg.getSon(MainKey, "StartGame", BaseKey, getData(null)));
+        server.getOnlinePlayers().forEach((uuid, player) -> {
+            try {
+                DummyBossBar.Builder builder = new DummyBossBar.Builder(player);
+                MyPlayer myPlayer = Whitejoy.getMyPlayer(player);
+                builder.text(getBarData(player));
+                player.createBossBar(myPlayer.bossBar = builder.length(100f).build());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
         while (StartGame) {
             if (--Time <= 0) {
                 ErrorExit = false;
                 break;
             }
+            final float MyTime = (float) Time / initialTime * 100;
+            server.getOnlinePlayers().forEach((uuid, player) -> {
+                if (player == null || !player.isOnline()) return;
+                MyPlayer myPlayer = Whitejoy.getMyPlayer(player);
+                if (myPlayer == null) return;
+                if (myPlayer.bossBar != null) {
+                    try {
+                        myPlayer.bossBar.setText(getBarData(player));
+                        myPlayer.bossBar.setLength(MyTime <= 0 ? 1 : MyTime);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             try {
                 sleep(1000);
             } catch (InterruptedException e) {
@@ -115,6 +144,16 @@ public class MainGame extends Thread {
             if (Time == 10 || Time == 30 || (Time <= 5 && Time >= 0) || Time % 60 == 0)
                 server.broadcastMessage(msg.getSon(MainKey, "Countdown", BaseKey, getData(null)));
         }
+        main.getRanking().save();
+        server.getOnlinePlayers().forEach((uuid, player) -> {
+            try {
+                MyPlayer myPlayer = Whitejoy.getMyPlayer(player);
+                if (myPlayer != null && myPlayer.bossBar != null)
+                    player.removeBossBar(myPlayer.bossBar.getBossBarId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
         StartGame = false;
         if (ErrorExit) {
             server.broadcastMessage(msg.getSon(MainKey, "ForcedStop", BaseKey, getData(null)));
@@ -125,19 +164,6 @@ public class MainGame extends Thread {
             server.broadcastMessage(msg.getSon(MainKey, "StopButNoPlayer"));
             return;
         }
-        Map<String, Object> map = main.getRanking().getMap();
-        double obj;
-        for (Map.Entry<String, Double> entry : FishTop.entrySet()) {
-            if (map.containsKey(entry.getKey())) {
-                obj = Tool.objToDouble(map.get(entry.getKey()), 0d);
-                if (obj < entry.getValue())
-                    map.put(entry.getKey(), entry.getValue());
-                continue;
-            }
-            map.put(entry.getKey(), entry.getValue());
-        }
-        main.getRanking().setAll(map);
-        main.getRanking().save();
         LinkedHashMap<String, Double> Top = getTop();
         if (Top.size() > 0) {
             Player player = null;
@@ -164,9 +190,16 @@ public class MainGame extends Thread {
         super.run();
     }
 
-    public static void setFishTop(Player player, double FishSIze) {
-        double Size = FishTop.containsKey(player.getName()) ? FishTop.get(player.getName()) : 0;
-        FishTop.put(player.getName(), Math.max(FishSIze, Size));
+    protected String getBarData(Player player) {
+        return msg.getSon(MainKey, "GameTime", GameTimeKey, new Object[]{Tool.getTimeBy(Time), Time, player.getName(), Whitejoy.getMyPlayer(player).getMoney(), FishCount, getRank(player.getName()), FishTop.size()});
+    }
+
+    public static void setFishTop(@Nonnull Player player, double FishSIze) {
+        String playerName = player.getName();
+        double Size = FishTop.containsKey(playerName) ? FishTop.get(playerName) : 0;
+        FishTop.put(playerName, Math.max(FishSIze, Size));
+        Size = main.getRanking().containsKey(playerName) ? main.getRanking().getDouble(playerName) : 0;
+        main.getRanking().set(playerName, Math.max(Size, FishSIze));
     }
 
     private Object[] getData(Player player) {
@@ -225,7 +258,7 @@ public class MainGame extends Thread {
      * @return
      */
     public static LinkedHashMap<String, Double> getTop() {
-        return new LinkedHashMap<>(Tool.sortByValueDescending(FishTop));
+        return new LinkedHashMap<>(FishTop.size() <= 0 ? FishTop : Tool.sortByValueDescending(FishTop));
     }
 
     static class TopItem {

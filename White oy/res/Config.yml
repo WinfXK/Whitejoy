@@ -25,7 +25,16 @@
 个人商店: false
 商店个性化介绍上限: 100
 上架手续费: 10000
-上架手续费货币: WC_Vault
+上架手续费货币: WC_Vault_Gold
 上架转移排名: true
-货币ID: WC_Vault
-货币名称: 人头
+自定义货币:
+  货币1:
+    ID: WC_Vault_Coupon
+    Name: 点券
+    Type: 点券
+  货币2:
+    ID: WC_Vault_Gold
+    Name: 金币
+    Type: 金币
+排行榜显示长度: 3
+WC-Vault: true
